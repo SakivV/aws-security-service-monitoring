@@ -167,7 +167,7 @@ Resources:
                       Subject=messageHeader
                   )
                   # Alarm - Config Disabled    
-              elif eventName == 'DeleteConfigurationRecorder' and eventSource == 'config.amazonaws.com':
+              elif eventName == 'StopConfigurationRecorder' and eventSource == 'config.amazonaws.com':
                   accountId = detail['userIdentity']['accountId']
                   timestamp = detail['eventTime']
                   eventsource = detail['eventSource']
@@ -252,7 +252,7 @@ Resources:
             - "DisableSecurityHub"
             - "DeleteDetector"
             - "Disable"
-            - "DeleteConfigurationRecorder"
+            - "StopConfigurationRecorder"
           eventSource:
             - "securityhub.amazonaws.com"
             - "guardduty.amazonaws.com"
