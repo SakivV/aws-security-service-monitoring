@@ -25,12 +25,5 @@ If you would like to extend this monitoring for other services, you can refer be
 | AWS IAM Access Analyzer | Helps identify resources that are shared with external entities.                                                   | access-analyzer.amazonaws.com | DeleteAnalyzer             |
 | Amazon Inspector        | Automated security assessment service to help improve the security and compliance of applications deployed on AWS. | inspector.amazonaws.com       | DeleteAssessmentTarget     |
 | AWS WAF                 | Web application firewall that helps protect web applications from common web exploits.                             | waf.amazonaws.com             | DeleteWebACL               |
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 
-<!-- code_chunk_output -->
-
-- [Monitoring AWS Security Services.](#monitoring-aws-security-services)
-  - [How it Works.](#how-it-works)
-
-<!-- /code_chunk_output -->
 
