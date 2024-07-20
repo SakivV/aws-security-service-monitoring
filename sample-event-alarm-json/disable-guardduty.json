@@ -2,16 +2,16 @@
     "eventVersion": "1.09",
     "userIdentity": {
         "type": "AssumedRole",
-        "principalId": "AROAVP77OUV3WGSPG4CUW:cloudgyan-admin",
-        "arn": "arn:aws:sts::377955984759:assumed-role/AWSReservedSSO_AWSAdministratorAccess_8d00c067d78b2d3a/cloudgyan-admin",
-        "accountId": "377955984759",
+        "principalId": "ASDFHGJRKTJNV89894:cloudgyan-admin",
+        "arn": "arn:aws:sts::12345678900:assumed-role/AWSReservedSSO_AWSAdministratorAccess_8d00c067d78b2d3a/cloudgyan-admin",
+        "accountId": "12345678900",
         "accessKeyId": "ASIAVP77OUV3VEGR5RMC",
         "sessionContext": {
             "sessionIssuer": {
                 "type": "Role",
-                "principalId": "AROAVP77OUV3WGSPG4CUW",
-                "arn": "arn:aws:iam::377955984759:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSAdministratorAccess_8d00c067d78b2d3a",
-                "accountId": "377955984759",
+                "principalId": "ASDFHGJRKTJNV89894",
+                "arn": "arn:aws:iam::12345678900:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSAdministratorAccess_8d00c067d78b2d3a",
+                "accountId": "12345678900",
                 "userName": "AWSReservedSSO_AWSAdministratorAccess_8d00c067d78b2d3a"
             },
             "attributes": {
@@ -24,7 +24,7 @@
     "eventSource": "guardduty.amazonaws.com",
     "eventName": "DeleteDetector",
     "awsRegion": "us-east-1",
-    "sourceIPAddress": "117.99.251.0",
+    "sourceIPAddress": "111.33.120.2",
     "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
     "requestParameters": {
         "detectorId": "22c86489a4f493b0ff2fc6b59aba8858"
@@ -35,6 +35,6 @@
     "readOnly": false,
     "eventType": "AwsApiCall",
     "managementEvent": true,
-    "recipientAccountId": "377955984759",
+    "recipientAccountId": "12345678900",
     "eventCategory": "Management"
 }
