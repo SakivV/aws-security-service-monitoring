@@ -1,0 +1,273 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: CloudFormation template to create CloudWatch alarms for Security Events
+
+Parameters:
+  NotificationEmail:
+    Description: 'The email address to receive SNS notifications'
+    Type: String
+
+Resources:
+  # SNS Topic for sending notifications
+  SecurityAlarmsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: 'SecurityAlarmsTopic'
+      Subscription:
+        - Endpoint: !Ref NotificationEmail
+          Protocol: 'email'
+  # SNS Topic Policy
+  SecurityAlarmsTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref SecurityAlarmsTopic
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal: '*'
+            Action: 'SNS:Publish'
+            Resource: !Ref SecurityAlarmsTopic
+            Condition:
+              ArnLike:
+                aws:SourceArn: !GetAtt SecurityEventProcessorLambda.Arn
+
+  # CloudWatch Log Group for Lambda
+  LambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${SecurityEventProcessorLambda}
+      RetentionInDays: 30
+  
+  # Lambda Function to process CloudTrail events
+  SecurityEventProcessorLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: SecurityEventProcessorLambda
+      Handler: 'index.handler'
+      Role: !GetAtt SecEventLambdaExecutionRole.Arn
+      Runtime: 'python3.12'
+      Environment:
+        Variables:
+          ACCOUNT_ID: !Ref AWS::AccountId
+          REGION: !Ref AWS::Region
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import os
+
+          sns = boto3.client('sns')
+
+          def handler(event, context):
+              detail = event['detail']
+              eventName = detail['eventName']
+              userType = detail['userIdentity']['type']
+              eventSource = detail['eventSource']
+
+              if eventName == 'ConsoleLogin' and userType == 'Root':
+                  accountId = detail['userIdentity']['accountId']
+                  timestamp = detail['eventTime']
+                  sourceIp = detail['sourceIPAddress']
+                  loginStatus = detail.get('responseElements', {}).get('ConsoleLogin')
+                  mfaUsed = detail.get('additionalEventData', {}).get('MFAUsed', 'No')
+
+                  # Log the event details
+                  print(f"Root login attempt: AccountId={accountId}, Timestamp={timestamp}, SourceIp={sourceIp}, Status={loginStatus}, MFAUsed={mfaUsed}")
+                  # Create JSON message
+                  message = {
+                      "AccountId": accountId,
+                      "Timestamp": timestamp,
+                      "SourceIp": sourceIp,
+                      "LoginStatus": loginStatus,
+                      "MFAUsed": mfaUsed,
+                      "Message": "Root login attempt detected"
+                  }
+                  # Publish message to SNS topic
+                  messageToPublish = json.dumps(message)
+                  messageHeader = f"Root login attempt detected\nAccountId: {accountId}\nTimestamp: {timestamp}\nSourceIp: {sourceIp}\nStatus: {loginStatus}\nMFAUsed: {mfaUsed}"
+                  sns.publish(
+                      TopicArn=f"arn:aws:sns:{os.environ['REGION']}:{os.environ['ACCOUNT_ID']}:SecurityAlarmsTopic",
+                      Message=messageToPublish,
+                      Subject=messageHeader
+                  )
+
+              elif eventName == 'DisableSecurityHub':
+                  accountId = detail['userIdentity']['accountId']
+                  timestamp = detail['eventTime']
+                  sourceIp = detail['sourceIPAddress']
+                  userid = detail['userIdentity']['sessionContext']['sessionIssuer']['userName']
+                  
+                  # Create JSON message
+                  message = {
+                      "AccountId": accountId,
+                      "Timestamp": timestamp,
+                      "SourceIp": sourceIp,
+                      "UserID": userid,
+                      "EventSource": eventSource,
+                      "Message": "Security Hub has been Disabled"
+                  }
+                  # Publish message to SNS topic
+                  messageToPublish = json.dumps(message)
+                  messageHeader = f"Security Hub Disabled for Account: {accountId}"
+                  sns.publish(
+                      TopicArn=f"arn:aws:sns:{os.environ['REGION']}:{os.environ['ACCOUNT_ID']}:SecurityAlarmsTopic",
+                      Message=messageToPublish,
+                      Subject=messageHeader
+                  )
+                # Alarm - GuardDuty Disable
+              elif eventName == 'DeleteDetector' and eventSource == 'guardduty.amazonaws.com':
+                  accountId = detail['userIdentity']['accountId']
+                  timestamp = detail['eventTime']
+                  eventsource = detail['eventSource']
+                  sourceIp = detail['sourceIPAddress']
+                  userid = detail['userIdentity']['sessionContext']['sessionIssuer']['userName']
+                  
+                  # Create JSON message
+                  message = {
+                      "AccountId": accountId,
+                      "Timestamp": timestamp,
+                      "SourceIp": sourceIp,
+                      "UserID": userid,
+                      "EventSource": eventSource,
+                      "Message": "GuardDuty has been Disabled"
+                  }
+                  # Publish message to SNS topic
+                  messageToPublish = json.dumps(message)
+                  messageHeader = f"GuardDuty Disabled for Account: {accountId}"
+                  sns.publish(
+                      TopicArn=f"arn:aws:sns:{os.environ['REGION']}:{os.environ['ACCOUNT_ID']}:SecurityAlarmsTopic",
+                      Message=messageToPublish,
+                      Subject=messageHeader
+                  )
+
+                  # Alarm - Inspector Disabled   
+              elif eventName == 'Disable' and eventSource == 'inspector2.amazonaws.com':
+                  accountId = detail['userIdentity']['accountId']
+                  timestamp = detail['eventTime']
+                  eventsource = detail['eventSource']
+                  sourceIp = detail['sourceIPAddress']
+                  userid = detail['userIdentity']['sessionContext']['sessionIssuer']['userName']
+                  
+                  # Create JSON message
+                  message = {
+                      "AccountId": accountId,
+                      "Timestamp": timestamp,
+                      "SourceIp": sourceIp,
+                      "UserID": userid,
+                      "EventSource": eventSource,
+                      "Message": "AWS Inspector has been Disabled"
+                  }
+                  # Publish message to SNS topic
+                  messageToPublish = json.dumps(message)
+                  messageHeader = f"AWS Inspector Disabled for Account: {accountId}"
+                  sns.publish(
+                      TopicArn=f"arn:aws:sns:{os.environ['REGION']}:{os.environ['ACCOUNT_ID']}:SecurityAlarmsTopic",
+                      Message=messageToPublish,
+                      Subject=messageHeader
+                  )
+                  # Alarm - Config Disabled    
+              elif eventName == 'DeleteConfigurationRecorder' and eventSource == 'config.amazonaws.com':
+                  accountId = detail['userIdentity']['accountId']
+                  timestamp = detail['eventTime']
+                  eventsource = detail['eventSource']
+                  sourceIp = detail['sourceIPAddress']
+                  userid = detail['userIdentity']['sessionContext']['sessionIssuer']['userName']
+                  
+                  # Create JSON message
+                  message = {
+                      "AccountId": accountId,
+                      "Timestamp": timestamp,
+                      "SourceIp": sourceIp,
+                      "UserID": userid,
+                      "EventSource": eventSource,
+                      "Message": "AWS Config has been Disabled"
+                  }
+                  # Publish message to SNS topic
+                  messageToPublish = json.dumps(message)
+                  messageHeader = f"AWS Config Disabled for Account: {accountId}"
+                  sns.publish(
+                      TopicArn=f"arn:aws:sns:{os.environ['REGION']}:{os.environ['ACCOUNT_ID']}:SecurityAlarmsTopic",
+                      Message=messageToPublish,
+                      Subject=messageHeader
+                  )    
+
+  # Lambda Execution Role
+  SecEventLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: 'SecEventLambdaExecutionRole'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Service: 'lambda.amazonaws.com'
+            Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: 'LambdaCloudWatchPolicy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'logs:*'
+                  - 'sns:Publish'
+                Resource: '*'
+
+  # EventBridge Rule for Root Console Login
+  RootConsoleLoginEventRule:
+    Type: 'AWS::Events::Rule'
+    Properties:
+      Name: 'RootConsoleLoginEventRule'
+      EventPattern:
+        detail:
+          eventName:
+            - "ConsoleLogin"
+          userIdentity:
+            type:
+              - "Root"
+      State: 'ENABLED'
+      Targets:
+        - Arn: !GetAtt SecurityEventProcessorLambda.Arn
+          Id: "SecurityEventProcessorLambdaTarget"
+
+  # Permission for EventBridge to invoke Lambda
+  LambdaInvokePermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !Ref SecurityEventProcessorLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: 'events.amazonaws.com'
+      SourceArn: !GetAtt RootConsoleLoginEventRule.Arn
+  
+  # EventBridge Rule for Security Hub
+  SecurityServicesDisablEventRule:
+    Type: 'AWS::Events::Rule'
+    Properties:
+      Name: 'SecurityServicesEventRule'
+      EventPattern:
+        detail:
+          eventName:
+            - "DisableSecurityHub"
+            - "DeleteDetector"
+            - "Disable"
+            - "DeleteConfigurationRecorder"
+          eventSource:
+            - "securityhub.amazonaws.com"
+            - "guardduty.amazonaws.com"
+            - "inspector2.amazonaws.com"
+            - "config.amazonaws.com"
+      State: 'ENABLED'
+      Targets:
+        - Arn: !GetAtt SecurityEventProcessorLambda.Arn
+          Id: "SecurityEventProcessorLambdaTarget"
+
+  # Permission for EventBridge to invoke Lambda
+  SecurityHubLambdaInvokePermission:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !Ref SecurityEventProcessorLambda
+      Action: 'lambda:InvokeFunction'
+      Principal: 'events.amazonaws.com'
+      SourceArn: !GetAtt SecurityServicesDisablEventRule.Arn

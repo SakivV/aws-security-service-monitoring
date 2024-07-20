@@ -1,0 +1,40 @@
+{
+    "eventVersion": "1.09",
+    "userIdentity": {
+        "type": "AssumedRole",
+        "principalId": "AROAVP77OUV3WGSPG4CUW:cloudgyan-admin",
+        "arn": "arn:aws:sts::377955984759:assumed-role/AWSReservedSSO_AWSAdministratorAccess_8d00c067d78b2d3a/cloudgyan-admin",
+        "accountId": "377955984759",
+        "accessKeyId": "ASIAVP77OUV3VEGR5RMC",
+        "sessionContext": {
+            "sessionIssuer": {
+                "type": "Role",
+                "principalId": "AROAVP77OUV3WGSPG4CUW",
+                "arn": "arn:aws:iam::377955984759:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSAdministratorAccess_8d00c067d78b2d3a",
+                "accountId": "377955984759",
+                "userName": "AWSReservedSSO_AWSAdministratorAccess_8d00c067d78b2d3a"
+            },
+            "attributes": {
+                "creationDate": "2024-07-19T03:05:16Z",
+                "mfaAuthenticated": "false"
+            }
+        }
+    },
+    "eventTime": "2024-07-19T03:45:42Z",
+    "eventSource": "guardduty.amazonaws.com",
+    "eventName": "DeleteDetector",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "117.99.251.0",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    "requestParameters": {
+        "detectorId": "22c86489a4f493b0ff2fc6b59aba8858"
+    },
+    "responseElements": null,
+    "requestID": "9bcef427-02f0-4d12-9eee-5c8cca1f7df0",
+    "eventID": "ba7addc3-a6dd-4e1d-a04f-5678636adc4e",
+    "readOnly": false,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "377955984759",
+    "eventCategory": "Management"
+}

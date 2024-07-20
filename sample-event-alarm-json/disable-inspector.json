@@ -1,0 +1,63 @@
+{
+    "eventVersion": "1.09",
+    "userIdentity": {
+        "type": "AssumedRole",
+        "principalId": "ASDFGHJKLOQWER1214235:cloudgyan-admin",
+        "arn": "arn:aws:sts::1234567890:assumed-role/AWSReservedSSO_AWSAdministratorAccess_8d00c067d78b2d3a/cloudgyan-admin",
+        "accountId": "1234567890",
+        "accessKeyId": "ASIAVP77OUV3XREN3MP7",
+        "sessionContext": {
+            "sessionIssuer": {
+                "type": "Role",
+                "principalId": "ASDFGHJKLOQWER1214235",
+                "arn": "arn:aws:iam::1234567890:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSAdministratorAccess_8d00c067d78b2d3a",
+                "accountId": "1234567890",
+                "userName": "AWSReservedSSO_AWSAdministratorAccess_8d00c067d78b2d3a"
+            },
+            "attributes": {
+                "creationDate": "2024-07-19T03:05:16Z",
+                "mfaAuthenticated": "false"
+            }
+        }
+    },
+    "eventTime": "2024-07-19T03:46:39Z",
+    "eventSource": "inspector2.amazonaws.com",
+    "eventName": "Disable",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "117.11.22..23",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    "requestParameters": {
+        "resourceTypes": [
+            "EC2",
+            "ECR",
+            "LAMBDA",
+            "LAMBDA_CODE"
+        ],
+        "accountIds": [
+            "1234567890"
+        ]
+    },
+    "responseElements": {
+        "Access-Control-Expose-Headers": "x-amzn-RequestId,x-amzn-ErrorType,x-amzn-ErrorMessage,Date",
+        "failedAccounts": [],
+        "accounts": [
+            {
+                "accountId": "1234567890",
+                "resourceStatus": {
+                    "ec2": "DISABLING",
+                    "ecr": "DISABLING",
+                    "lambda": "DISABLING",
+                    "lambdaCode": "DISABLED"
+                },
+                "status": "DISABLING"
+            }
+        ]
+    },
+    "requestID": "824e9c12-8e8a-4aa1-b77a-520601dd0163",
+    "eventID": "d33e942e-0b06-41d7-ad73-ad7424462246",
+    "readOnly": false,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "1234567890",
+    "eventCategory": "Management"
+}

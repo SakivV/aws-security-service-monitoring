@@ -1,0 +1,38 @@
+{
+    "eventVersion": "1.09",
+    "userIdentity": {
+        "type": "AssumedRole",
+        "principalId": "ASDFGHJKLOQWE23235:cloudgyan-admin",
+        "arn": "arn:aws:sts::12345678900:assumed-role/AWSReservedSSO_AWSAdministratorAccess_ce6304a53d577708/cloudgyan-admin",
+        "accountId": "12345678900",
+        "accessKeyId": "ASIA2ZFRP2VS3JVECA4Q",
+        "sessionContext": {
+            "sessionIssuer": {
+                "type": "Role",
+                "principalId": "ASDFGHJKLOQWE23235",
+                "arn": "arn:aws:iam::12345678900:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AWSAdministratorAccess_ce6304a53d577708",
+                "accountId": "12345678900",
+                "userName": "AWSReservedSSO_AWSAdministratorAccess_ce6304a53d577708"
+            },
+            "attributes": {
+                "creationDate": "2024-06-08T18:48:07Z",
+                "mfaAuthenticated": "false"
+            }
+        }
+    },
+    "eventTime": "2024-06-08T19:19:16Z",
+    "eventSource": "securityhub.amazonaws.com",
+    "eventName": "DisableSecurityHub",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "94.222.44.44",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+    "requestParameters": null,
+    "responseElements": null,
+    "requestID": "0a84481a-f3e8-4c87-b8cc-32a4dd173726",
+    "eventID": "67a83ef3-15b8-49d2-94a9-122fdb72c4d4",
+    "readOnly": false,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "12345678900",
+    "eventCategory": "Management"
+}
